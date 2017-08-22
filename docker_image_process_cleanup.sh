@@ -33,5 +33,5 @@ else
 fi
 
 #uncomment this to remove all docker images
-#docker rmi $(docker images |  awk '{print $3}') 2>/dev/null || echo "No images to delete."
+#docker rmi --force $(docker images |  awk '{print $3}') 2>/dev/null || echo "No images to delete."
 exit 0
