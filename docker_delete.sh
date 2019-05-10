@@ -2,14 +2,14 @@
 
 # options:
 # remove stopped containers and untagged images
-#   $ dkcleanup
+#   $bash docker_delete.sh
 # remove all stopped|running containers and untagged images
-#   $ dkcleanup --reset
+#   $bash docker_delete.sh --reset
 # remove containers|images|tags matching {repository|image|repository\image|tag|image:tag}
 # pattern and untagged images
-#   $ dkcleanup --purge {image}
+#   $bash docker_delete.sh --purge {image}
 # everything
-#   $ dkcleanup --nuclear
+#   $bash docker_delete.sh --nuclear
 
 if [ "$1" == "--reset" ]; then
     # Remove all containers regardless of state
@@ -31,6 +31,12 @@ else
     # Always remove untagged images
     docker rmi $(docker images | grep "<none>" | awk '{print $3}') 2>/dev/null || echo "No untagged images to delete."
 fi
+
+docker rm $(docker ps -q -f status=exited)
+
+docker volume rm $(docker volume ls -qf dangling=true)
+
+docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 
 #uncomment this to remove all docker images
 #docker rmi --force $(docker images |  awk '{print $3}') 2>/dev/null || echo "No images to delete."
